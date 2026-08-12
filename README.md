@@ -36,4 +36,17 @@ just test     # run tests
 just clean    # remove venv and caches
 ```
 
+The production bootstrap entrypoint is:
+
+```bash
+uvicorn bootstrap:app --reload --host 0.0.0.0 --port 8000
+```
+
+API routes are versioned under `/v1`, for example:
+
+- `POST /v1/chat`
+- `POST /v1/upload`
+- `GET /v1/history`
+
+
 

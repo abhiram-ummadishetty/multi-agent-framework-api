@@ -20,7 +20,7 @@ install:
 
 run:
     @echo "Run the FastAPI app locally"
-    source .venv/bin/activate && uvicorn main:app --reload --host 0.0.0.0 --port 8000
+    source .venv/bin/activate && uvicorn bootstrap:app --reload --host 0.0.0.0 --port 8000
 
 test:
     @echo "Run tests"
