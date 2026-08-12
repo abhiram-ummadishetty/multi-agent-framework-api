@@ -1,12 +1,27 @@
 """
 Multi-Agent Framework API — Main Entry Point
 """
+import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from config import get_settings
 from routers import chat, upload, history, feedback, agents
 
 settings = get_settings()
+
+# Configure basic logging
+logging.basicConfig(level=getattr(logging, settings.log_level.upper(), logging.INFO))
+logger = logging.getLogger("multi-agent-framework-api")
+
+# Initialize Sentry if configured
+if settings.sentry_dsn:
+    try:
+        import sentry_sdk
+
+        sentry_sdk.init(dsn=settings.sentry_dsn)
+        logger.info("Sentry initialized")
+    except Exception:
+        logger.exception("Failed to initialize Sentry")
 
 app = FastAPI(
     title="Multi-Agent Framework API",
@@ -27,6 +42,16 @@ app.include_router(upload.router,   prefix="/upload",   tags=["Upload"])
 app.include_router(history.router,  prefix="/history",  tags=["History"])
 app.include_router(feedback.router, prefix="/feedback", tags=["Feedback"])
 app.include_router(agents.router,   prefix="/agents",   tags=["Agents"])
+
+
+@app.on_event("startup")
+async def on_startup():
+    logger.info("Starting multi-agent-framework-api (env=%s)", settings.app_env)
+
+
+@app.on_event("shutdown")
+async def on_shutdown():
+    logger.info("Shutting down multi-agent-framework-api")
 
 
 @app.get("/health", tags=["Health"])
