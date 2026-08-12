@@ -16,9 +16,19 @@ async def chat(req: ChatRequest):
     session_id = req.session_id or str(uuid.uuid4())
     reply = await stub_llm_response(req.prompt)
 
-    user_msg = ChatMessage(role="user", content=req.prompt, timestamp=datetime.utcnow().isoformat())
-    assistant_msg = ChatMessage(role="assistant", content=reply, timestamp=datetime.utcnow().isoformat())
-    session_store.add_messages(session_id, [user_msg, assistant_msg])
+    user_msg = ChatMessage(
+        role="user",
+        content=req.prompt,
+        timestamp=datetime.utcnow().isoformat(),
+        message_id=str(uuid.uuid4()),
+    )
+    assistant_msg = ChatMessage(
+        role="assistant",
+        content=reply,
+        timestamp=datetime.utcnow().isoformat(),
+        message_id=str(uuid.uuid4()),
+    )
+    await session_store.add_messages(session_id, [user_msg, assistant_msg])
 
     return ChatResponse(session_id=session_id, message=assistant_msg)
 
@@ -35,9 +45,19 @@ async def chat_stream(prompt: str, session_id: str = ""):
             yield f"data: {data}\n\n"
             await asyncio.sleep(0)
 
-        user_msg = ChatMessage(role="user", content=prompt, timestamp=datetime.utcnow().isoformat())
-        assistant_msg = ChatMessage(role="assistant", content=full_response, timestamp=datetime.utcnow().isoformat())
-        session_store.add_messages(sid, [user_msg, assistant_msg])
+        user_msg = ChatMessage(
+            role="user",
+            content=prompt,
+            timestamp=datetime.utcnow().isoformat(),
+            message_id=str(uuid.uuid4()),
+        )
+        assistant_msg = ChatMessage(
+            role="assistant",
+            content=full_response,
+            timestamp=datetime.utcnow().isoformat(),
+            message_id=str(uuid.uuid4()),
+        )
+        await session_store.add_messages(sid, [user_msg, assistant_msg])
 
         yield f"data: {json.dumps({'done': True, 'session_id': sid})}\n\n"
 

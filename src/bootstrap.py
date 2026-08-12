@@ -6,6 +6,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from config import get_settings
+from db.session import init_db
 from routers.v1 import router as v1_router
 
 
@@ -47,6 +48,10 @@ def create_app() -> FastAPI:
 
     app.include_router(v1_router, prefix="/v1")
 
+    @app.get("/health")
+    async def health_check():
+        return {"status": "ok"}
+
     @app.exception_handler(StarletteHTTPException)
     async def http_exception_handler(request, exc):
         return JSONResponse({"detail": exc.detail}, status_code=exc.status_code)
@@ -58,6 +63,7 @@ def create_app() -> FastAPI:
     @app.on_event("startup")
     async def on_startup():
         logging.getLogger("bootstrap").info("Starting multi-agent-framework-api (env=%s)", settings.app_env)
+        await init_db()
 
     @app.on_event("shutdown")
     async def on_shutdown():

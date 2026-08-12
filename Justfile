@@ -18,9 +18,13 @@ install:
     @echo "Install dependencies into active venv (or create with just setup)"
     source .venv/bin/activate && pip install -r requirements.txt || echo "Use 'just setup' to create venv and install uv"
 
+uvinstall:
+    @echo "Install dependencies from pyproject.toml using uv"
+    source .venv/bin/activate && uv install
+
 run:
     @echo "Run the FastAPI app locally"
-    source .venv/bin/activate && uvicorn bootstrap:app --reload --host 0.0.0.0 --port 8000
+    source .venv/bin/activate && uv run uvicorn bootstrap:app --reload --host 0.0.0.0 --port 8000
 
 test:
     @echo "Run tests"

@@ -87,4 +87,3 @@ async def stream(prompt: str) -> AsyncGenerator[str, None]:
                 # leftover
                 if buffer:
                     yield buffer
-*** End Patch
