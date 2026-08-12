@@ -1,10 +1,18 @@
 """
-Stub LLM service — simulates local LLM responses.
-Replace with actual LLM client (Ollama, GCP, OpenAI) later.
+LLM service layer — delegates to a configured external LLM client when available,
+otherwise falls back to a lightweight stub implementation for local development.
 """
 import asyncio
 import random
 from typing import AsyncGenerator
+from config import get_settings
+
+# Optional external LLM client
+try:
+    from clients.external_llm import generate as external_generate, stream as external_stream
+except Exception:
+    external_generate = None
+    external_stream = None
 
 STUB_RESPONSES = [
     "I'm the Multi-Agent Orchestrator. I've received your query and I'm routing it to the most suitable agent in the framework.",
@@ -15,16 +23,28 @@ STUB_RESPONSES = [
     "I'm connected to the local LLM inference engine (gpt-oss-120B on GCP GKE). Generating a response tailored to your enterprise context...",
 ]
 
+settings = get_settings()
+
 
 async def stub_llm_response(prompt: str) -> str:
-    """Simulate a non-streaming LLM response with a small delay."""
+    """Return a full response. If an external LLM URL is configured, use it."""
+    if settings.external_llm_url and external_generate:
+        return await external_generate(prompt)
+
+    # local stub
     await asyncio.sleep(0.8)
     base = random.choice(STUB_RESPONSES)
     return f"{base}\n\n> **Your query:** {prompt}"
 
 
 async def stub_stream_response(prompt: str) -> AsyncGenerator[str, None]:
-    """Simulate a token-by-token streaming response."""
+    """Stream tokens. If external LLM streaming is available, stream from it."""
+    if settings.external_llm_url and external_stream:
+        async for token in external_stream(prompt):
+            yield token
+        return
+
+    # local stub streaming
     base = random.choice(STUB_RESPONSES)
     full = f"{base}\n\n> **Your query:** {prompt}"
 

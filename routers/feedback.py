@@ -2,7 +2,7 @@
 Feedback router — thumbs up/down + text feedback per message.
 """
 from fastapi import APIRouter
-from models.feedback import FeedbackRequest, FeedbackResponse
+from schemas.feedback import FeedbackRequest, FeedbackResponse
 from services.store import session_store
 
 router = APIRouter()

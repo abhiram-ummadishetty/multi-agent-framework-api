@@ -1,6 +1,6 @@
-from models.chat import ChatMessage
-from models.history import SessionSummary
-from models.feedback import FeedbackRequest
+from schemas.chat import ChatMessage
+from schemas.history import SessionSummary
+from schemas.feedback import FeedbackRequest
 from typing import List, Dict
 from datetime import datetime
 

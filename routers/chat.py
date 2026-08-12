@@ -8,7 +8,7 @@ from datetime import datetime
 
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
-from models.chat import ChatRequest, ChatResponse, ChatMessage
+from schemas.chat import ChatRequest, ChatResponse, ChatMessage
 from services.llm import stub_llm_response, stub_stream_response
 from services.store import session_store
 

@@ -2,7 +2,7 @@
 History router — returns past chat sessions.
 """
 from fastapi import APIRouter
-from models.history import SessionListResponse, SessionDetailResponse
+from schemas.history import SessionListResponse, SessionDetailResponse
 from services.store import session_store
 
 router = APIRouter()

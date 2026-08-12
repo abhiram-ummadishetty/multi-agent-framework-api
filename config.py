@@ -93,6 +93,10 @@ class Settings(BaseSettings):
     gemini_api_key: str = ""
     gemini_model: str = "gemini-2.0-flash"
 
+    # External LLM service (generic HTTP API)
+    external_llm_url: str = ""
+    external_llm_api_key: str = ""
+
     # Embedding model (used by RAG agent)
     embedding_provider: str = "stub"
     """Options: stub | openai | ollama | sentence-transformers"""

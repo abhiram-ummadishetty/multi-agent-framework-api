@@ -2,7 +2,7 @@
 Agents router — stubbed agent registry (will connect to PostgreSQL later).
 """
 from fastapi import APIRouter
-from models.agents import AgentListResponse, AgentInfo
+from schemas.agents import AgentListResponse, AgentInfo
 
 router = APIRouter()
 

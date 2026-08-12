@@ -5,7 +5,7 @@ import os
 import uuid
 from datetime import datetime
 from fastapi import APIRouter, UploadFile, File, HTTPException
-from models.upload import UploadResponse
+from schemas.upload import UploadResponse
 from config import get_settings
 
 router = APIRouter()
