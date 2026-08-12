@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: multi-agent-framework-api
+  namespace: multi-agent
+  labels:
+    app: multi-agent-framework-api
+  annotations:
+    # Tell Traefik to use the standard web entrypoint (port 80)
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: api.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: multi-agent-framework-api
+                port:
+                  number: 8001
