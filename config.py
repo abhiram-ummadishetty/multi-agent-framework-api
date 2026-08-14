@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     """Runtime environment: development | staging | production"""
 
     api_host: str = "0.0.0.0"
-    api_port: int = 8001
+    api_port: int = 80
 
     allowed_origins: list[str] = [
         "http://localhost:5173",
