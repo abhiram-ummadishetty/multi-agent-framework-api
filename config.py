@@ -33,11 +33,12 @@ class Settings(BaseSettings):
     """Uvicorn / Python log level: debug | info | warning | error | critical"""
 
     # ── Database ──────────────────────────────────────────────────────────────
-    database_url: str = "sqlite+aiosqlite:///./data/app.db"
+    database_url: str = "sqlite+aiosqlite:///:memory:"
     """
     SQLAlchemy-compatible async connection string.
     Examples:
-      sqlite+aiosqlite:///./data/app.db               (default, file-based async)
+      sqlite+aiosqlite:///:memory:                    (default, in-memory async)
+      sqlite+aiosqlite:///./data/app.db               (file-based async)
       postgresql+psycopg://user:pass@host:5432/db      (production)
     """
 

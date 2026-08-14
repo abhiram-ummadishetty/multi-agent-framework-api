@@ -17,6 +17,9 @@ mkdir -p "$UPLOAD_DIR"
 # Ensure the running user owns the dir (relevant when mounted volumes are root-owned)
 chown -R "$(id -u):$(id -g)" "$DATA_DIR" 2>/dev/null || true
 
+# Determine the active port, prioritizing Cloud Run's standard PORT env var
+PORT="${PORT:-${API_PORT:-8001}}"
+
 # ── Startup summary ───────────────────────────────────────────────────────────
 echo "========================================"
 echo " Multi-Agent Framework API"
@@ -26,12 +29,12 @@ echo " LLM provider: ${LLM_PROVIDER:-stub}"
 echo " Vector store: ${VECTOR_STORE_TYPE:-memory}"
 echo " Upload dir  : ${UPLOAD_DIR}"
 echo " Log level   : ${LOG_LEVEL:-info}"
-echo " Port        : ${API_PORT:-8001}"
+echo " Port        : ${PORT}"
 echo "========================================"
 
 # ── Exec uvicorn (replaces shell, PID 1) ─────────────────────────────────────
 exec uvicorn main:app \
     --host "${API_HOST:-0.0.0.0}" \
-    --port "${API_PORT:-8001}" \
+    --port "${PORT}" \
     --log-level "${LOG_LEVEL:-info}" \
     --no-access-log

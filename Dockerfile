@@ -37,6 +37,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
+ENV PYTHONPATH="/app/src:/app"
 
 RUN groupadd --gid 1001 appgroup && \
     useradd --uid 1001 --gid appgroup --shell /bin/sh --create-home appuser
@@ -56,6 +57,6 @@ USER appuser
 EXPOSE 80
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8001/health', timeout=5)" >/dev/null 2>&1 || exit 1
+    CMD python -c "import os, urllib.request; p = os.getenv('PORT', os.getenv('API_PORT', '8001')); urllib.request.urlopen(f'http://localhost:{p}/health', timeout=5)" >/dev/null 2>&1 || exit 1
 
 ENTRYPOINT ["/docker-entrypoint.sh"]

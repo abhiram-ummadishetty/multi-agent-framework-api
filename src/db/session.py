@@ -1,6 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 from config import get_settings
 from db.models import Base, ChatThread, ChatMessage, Feedback
 
@@ -8,7 +9,18 @@ settings = get_settings()
 
 database_url = settings.database_url
 
-engine = create_async_engine(database_url, echo=settings.db_echo_sql, future=True)
+# Configure StaticPool for in-memory SQLite to persist data between connections
+if "sqlite" in database_url and ":memory:" in database_url:
+    engine = create_async_engine(
+        database_url,
+        echo=settings.db_echo_sql,
+        future=True,
+        poolclass=StaticPool,
+        connect_args={"check_same_thread": False},
+    )
+else:
+    engine = create_async_engine(database_url, echo=settings.db_echo_sql, future=True)
+
 AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
